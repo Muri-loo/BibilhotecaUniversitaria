@@ -1,0 +1,154 @@
+INSERT INTO `autor` (`id`, `Nome`) VALUES
+(12345, 'Gustavo'),
+(54876, 'Mauro'),
+(4356, 'Micael'),
+(54321, 'Murilo'),
+(9890, 'Rodrigo'),
+(7654, 'Salvador');
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+INSERT INTO `area_tematica` (`Id`, `Nome`, `Area_Tematica_superior_Id`) VALUES ('1', 'Ficção', NULL);
+INSERT INTO `area_tematica` (`Id`, `Nome`, `Area_Tematica_superior_Id`) VALUES ('2', 'Fantasia', NULL);
+INSERT INTO `area_tematica` (`Id`, `Nome`, `Area_Tematica_superior_Id`) VALUES ('3232', 'Aventura', NULL);
+INSERT INTO `area_tematica` (`Id`, `Nome`, `Area_Tematica_superior_Id`) VALUES ('5678', 'Romance', NULL);
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+INSERT INTO `publicacao` (`Id`, `Nome`, `Nome_abreviado`, `Codigo`, `Data_de_publicacao`, `Ano_de_publicacao`, `Nr_Pags`, `Capa`, `Capa_em_miniatura`, `Qtd_Emprestimos`, `Qtd_Acessos`, `Data_de_aquisicao`, `Area_Tematica_Id`, `relevancia`) VALUES
+(1, 'Harry Potter', 'HP', 1001, '2021-12-01', 2015, 329, '(\"PATH/TO/IMG\")', '(\"PATH/TO/IMG\")', 0, 0, '2016-12-08', NULL, 3),
+(2, 'Wonderland', 'alice', 1002, '2021-12-03', 2014, 325, 'Path', 'path', 0, 0, '2021-12-05', 2, 4),
+(3, 'TimesNewRoman', '1', 1003, '2021-12-01', 2015, 120, 'path', 'path', 0, 0, '2021-12-07', 1, 1),
+(4, 'MonografiaIscte', 'iscte', 1004, '2021-12-01', 2014, 203, 'path', 'path', 0, 0, '2021-12-06', 1, 4),
+(64747, 'Vivenda russa', 'russ', 9809, '2021-11-17', 2021, 322, 'bonm', 'bobn', 5, 4, '2021-12-01', 1, 2),
+(98799, 'A aventura do salsichao', 'salsa', 1234, '2021-12-02', 2021, 65, 'Bonita historia', NULL, 2, 3, '2021-12-05', 2, 3);
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+INSERT INTO `editora_ou_periodico` (`Id`) VALUES ('1');
+INSERT INTO `editora_ou_periodico` (`Id`) VALUES ('2'), ('3');
+INSERT INTO `editora_ou_periodico` (`Id`) VALUES ('4'), ('5');
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+INSERT INTO `editora` (`Editora_ou_Periodico_Id`, `Nome`) VALUES ('1', 'PortoEditora');
+INSERT INTO `editora` (`Editora_ou_Periodico_Id`, `Nome`) VALUES ('2', 'LisboaEditora');
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+INSERT INTO `livro` (`Id`, `Nome`, `Editora_Nome`) VALUES ('1', 'HarryPotter', 'PortoEditora');
+INSERT INTO `livro` (`Id`, `Nome`, `Editora_Nome`) VALUES ('2', 'Wonderland', 'LisboaEditora');
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+INSERT INTO `edicao_de_livro` (`Livro_Id`, `Publicacao_Id`, `Numero`, `ISBN`) VALUES ('2', '2', '2', '1002');
+INSERT INTO `edicao_de_livro` (`Livro_Id`, `Publicacao_Id`, `Numero`, `ISBN`) VALUES ('1', '1', '1', '1001');
+-----------------------------------------------------------------------------------------------------------
+INSERT INTO `monografia` (`Publicacao_Id`, `Tipo_de_monografia_Nome`) VALUES (4, 'Texto pedagógico');
+----------------------------------------------------------------------------------------------------------
+
+INSERT INTO `utente` (`Numero`, `Nome`, `Telefone`, `Morada`, `Email`, `Tipo_Doc_Identificacao`, `Nr_Doc_Identificacao`) VALUES
+(1, 'Murilo', 919260780, 'rua da fonte', 'murilo@toloa', 'cc', 30390),
+(2, 'Guga', 919260780, 'rua da fonte', 'murilo@tloa', 'cc', 3039),
+(3, 'Gustavo', 919260780, 'rua da fonte', 'murilo@tolo', 'cc', 3090),
+(4, 'Salvador', 919260780, 'rua da fonte', 'murilo@oloa', 'cc', 390),
+(5, 'Murilo', 919260780, 'rua da fonte', 'murilo@tola', 'cc', 3030);
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+INSERT INTO `espaco_de_arrumacao` (`Id`, `Nivel_de_ocupacao`, `Area_Tematica_Id`) VALUES
+(1321, 45, 1),
+(4114, 54, 1),
+(35364, 23, 2);
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+INSERT INTO `andar` (`Numero`) VALUES
+(0),
+(1),
+(2),
+(3);
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+INSERT INTO `armario` (`Andar_Numero`, `Espaco_de_arrumacao_Id`, `Letra`) VALUES
+(0, 1321, 'A'),
+(2, 4114, 'R'),
+(1, 35364, 'S');
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+INSERT INTO `prateleira` (`Andar_Numero`, `Armario_Letra`, `Espaco_de_arrumacao_Id`, `Numero`) VALUES
+(0, 'A', 1321, 3),
+(0, 'A', 4114, 43),
+(1, 'S', 35364, 65);
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+INSERT INTO `publicacao_fisica` (`Publicacao_Id`) VALUES
+(2),
+(3),
+(98799);
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+INSERT INTO `publicacao_digital` (`Publicacao_Id`) VALUES
+(1),
+(4),
+(64747);
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+INSERT INTO `estado_de_conservacao` (`Nome`) VALUES
+('Deformado'),
+('Novo'),
+('Semi-Novo'),
+('Usado');
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+INSERT INTO `exemplar` (`Publicacao_Id`, `Nr`, `Codigo_de_barras`, `Data_de_aquisicao`, `RFID`, `Pode_ser_emprestado`, `Estado_de_conservacao_Nome`, `Localizacao_Andar_Numero`, `Localizacao_Armario_Letra`, `Localizacao_Prateleira_Numero`) VALUES
+(2, 1, 1333234, '2021-12-08', 42324, 1, 'Novo', 0, 'A', 43),
+(3, 2, 31232121, '2021-12-03', 4442321, 1, 'Semi-Novo', 0, 'A', 3),
+(98799, 3, 1233133, '2021-12-05', 3424342, 1, 'Usado', 0, 'A', 43);
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+INSERT INTO `reserva` (`Publicacao_Id_`, `Utente_Numero_`, `Data_e_Hora`, `Exemplar_escolhido_Publicacao_Id`, `Exemplar_Nr`) VALUES
+(2, 1, '2021-12-05 22:27:01', 2, 1),
+(2, 2, '2021-12-05 22:25:20', 2, 1),
+(2, 3, '2021-12-05 22:27:15', 2, 1),
+(2, 4, '2021-12-05 22:26:23', 2, 1),
+(3, 5, '2021-12-05 22:26:13', 3, 2),
+(98799, 2, '2021-12-05 22:27:24', 98799, 3);
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

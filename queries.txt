@@ -1,0 +1,16 @@
+----------------------------------------------------------------------------------------------------------------------------------------
+1-SELECT publicacao.Nome,publicacao.Data_de_publicacao,
+IF(publicacao.Id=edicao_de_livro.Publicacao_Id,'Livro',
+  IF(publicacao.Id=edicao_de_periodico.Publicacao_Id,'Periodico',
+    IF(publicacao.Id=monografia.Publicacao_Id,'Monografia','NA')  )	)
+FROM publicacao,edicao_de_periodico,edicao_de_livro,monografia;
+--------------------------------------------------------------------------------------------------------------------------------------
+2-SELECT publicacao.Nome,COUNT(*) AS NumeroReservas FROM publicacao,reserva
+WHERE reserva.Publicacao_Id_=publicacao.Id  AND reserva.Data_e_Hora>DATE_ADD(CURRENT_DATE, INTERVAL -6 MONTH) 
+GROUP BY Publicacao_Id_
+HAVING COUNT(*)=(SELECT COUNT(*) AS NumeroReservas FROM publicacao,reserva
+WHERE reserva.Publicacao_Id_=publicacao.Id  AND reserva.Data_e_Hora>DATE_ADD(CURRENT_DATE, INTERVAL -6 MONTH) 
+GROUP BY Publicacao_Id_
+ORDER BY NumeroReservas DESC
+LIMIT 1);
+---------------------------------------------------------------------------------------------------------------------------------------
