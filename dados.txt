@@ -27,6 +27,7 @@ INSERT INTO `editora_ou_periodico` (`Id`) VALUES ('4'), ('5');
 
 INSERT INTO `editora` (`Editora_ou_Periodico_Id`, `Nome`) VALUES ('1', 'PortoEditora');
 INSERT INTO `editora` (`Editora_ou_Periodico_Id`, `Nome`) VALUES ('2', 'LisboaEditora');
+INSERT INTO `editora` (`Editora_ou_Periodico_Id`, `Nome`) VALUES ('3', 'TimesRoman');
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 INSERT INTO `livro` (`Id`, `Nome`, `Editora_Nome`) VALUES ('1', 'HarryPotter', 'PortoEditora');
 INSERT INTO `livro` (`Id`, `Nome`, `Editora_Nome`) VALUES ('2', 'Wonderland', 'LisboaEditora');
@@ -96,8 +97,12 @@ INSERT INTO `reserva` (`Publicacao_Id_`, `Utente_Numero_`, `Data_e_Hora`, `Exemp
 (98799, 2, '2021-12-05 22:27:24', 98799, 3);
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
-
+INSERT INTO `emprestimo` (`Numero`, `Data_hora`, `Publicacao_Id`, `Exemplar_Nr`, `Utente_Numero`, `Data_de_devolucao_limite`, `Qtd_de_prolongamentos`, `Data_de_devolucao`) VALUES
+(1, '2021-04-02 16:33:23', 2, 1, 1, '2021-12-01', 0, NULL),
+(2, '2021-01-13 16:34:31', 2, 1, 2, '2021-12-03', 0, '2021-12-09 17:34:31'),
+(3, '2021-03-17 16:35:25', 3, 2, 2, '2021-12-21', 0, '2021-12-09 17:35:25');
+----------------------------------------------------------------------------------------------------------------------------------------
+INSERT INTO `periodico` (`Editora_Nome`, `Editora_ou_Periodico_Id`, `Periodicidade_Nome`, `ISSN`, `Sigla`, `Nome`) VALUES ('TimesRoman', '3', 'Anual', '1234', 'TNR', 'Times romano');
 
 
 
