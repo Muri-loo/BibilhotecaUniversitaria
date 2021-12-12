@@ -14,13 +14,6 @@ GROUP BY Publicacao_Id_
 ORDER BY NumeroReservas DESC
 LIMIT 1);
 ---------------------------------------------------------------------------------------------------------------------------------------
-
-3-SELECT p.Nome,tab.nome,p.Data_de_publicacao,p.relevancia FROM (SELECT area_tematica.Nome,area_tematica.Id AS Anome,MAX(publicacao.relevancia) AS maxx FROM publicacao, area_tematica 
-WHERE publicacao.Area_Tematica_Id=area_tematica.Id
-GROUP BY Area_Tematica_Id) as tab,publicacao AS p
-WHERE tab.Anome=p.Area_Tematica_Id AND p.relevancia=tab.maxx;
-
-
 3-SELECT p.Nome,tab.nome,p.Data_de_publicacao,p.relevancia FROM (SELECT area_tematica.Nome,area_tematica.Id AS Anome,MAX(publicacao.relevancia) AS maxx FROM publicacao, area_tematica 
 WHERE publicacao.Area_Tematica_Id=area_tematica.Id
 GROUP BY Area_Tematica_Id) as tab,publicacao AS p
@@ -44,10 +37,10 @@ GROUP BY publicacao.Nome
 ORDER BY COUNT(*) DESC 
 LIMIT 1);
 ---------------------------------------------------------------------------------------------------------------------------------------
-INSERT INTO `edicao_de_periodico` (`Periodico_Editora_ou_Periodico_Id`, `Publicacao_Id`, `Numero`) VALUES ('3', '3', '5');
+
 -----------------------------------------------------------------------------------------------------------------------------------------
 QUERY CORRETA 
-5-SELECT lista.Lista_de_leitura_Utente_Numero_,COUNT(DISTINCT publicacao.Area_Tematica_Id) AS numeroAreas FROM livro_em_lista_leitura AS lista,edicao_de_livro,publicacao
+5-SELECT lista.Lista_de_leitura_Nome_,COUNT(DISTINCT publicacao.Area_Tematica_Id) AS numeroAreas FROM livro_em_lista_leitura AS lista,edicao_de_livro,publicacao
 WHERE lista.Edicao_de_Livro_Livro_Id_=edicao_de_livro.Livro_Id AND edicao_de_livro.Publicacao_Id=publicacao.Id
 GROUP BY lista.Lista_de_leitura_Nome_
 HAVING COUNT(DISTINCT publicacao.Area_Tematica_Id)/(SELECT COUNT(*) FROM area_tematica)>0.75;
