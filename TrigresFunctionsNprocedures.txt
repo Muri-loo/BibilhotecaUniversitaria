@@ -1,0 +1,29 @@
+TRIGGERS FUNCTION AND PROCEDURES
+1--------------------------------------------------------------------------------------------------------------------------------------
+BEGIN
+SELECT * FROM exemplar WHERE exemplar.Publicacao_Id=id;
+END
+---------------------------------------------------------------------------------------------------------------------------------------
+2--------------------------------------------------------------------------------------------------------------------------------------
+BEGIN
+SELECT area_tematica.Nome,COUNT(*) AS Tema FROM livro_em_lista_leitura AS l,edicao_de_livro,publicacao,area_tematica
+WHERE
+l.Edicao_de_Livro_Livro_Id_=edicao_de_livro.Livro_Id AND edicao_de_livro.Publicacao_Id=publicacao.Id AND publicacao.Area_Tematica_Id=area_tematica.Id
+AND l.Lista_de_leitura_Nome_=nomeL
+GROUP BY area_tematica.Id;
+END
+---------------------------------------------------------------------------------------------------------------------------------------
+3--------------------------------------------------------------------------------------------------------------------------------------
+BEGIN 
+DECLARE numeroDias integer;
+
+SELECT Datediff(CURRENT_DATE,emprestimo.Data_de_devolucao_limite) INTO numeroDias FROM emprestimo_com_multa,emprestimo
+WHERE emprestimo_com_multa.Numero=emprestimo.Numero AND emprestimo_com_multa.Multa_paga=false AND emprestimo.Data_de_devolucao IS NULL
+AND emprestimo_com_multa.Numero=IDE;
+
+UPDATE 
+emprestimo_com_multa 
+SET Valor_actual_por_atraso=numeroDias*preco;
+
+END
+--------------------------------------------------------------------------------------------------------------------------------------

@@ -19,6 +19,12 @@ LIMIT 1);
 WHERE publicacao.Area_Tematica_Id=area_tematica.Id
 GROUP BY Area_Tematica_Id) as tab,publicacao AS p
 WHERE tab.Anome=p.Area_Tematica_Id AND p.relevancia=tab.maxx;
+
+
+3-SELECT p.Nome,tab.nome,p.Data_de_publicacao,p.relevancia FROM (SELECT area_tematica.Nome,area_tematica.Id AS Anome,MAX(publicacao.relevancia) AS maxx FROM publicacao, area_tematica 
+WHERE publicacao.Area_Tematica_Id=area_tematica.Id
+GROUP BY Area_Tematica_Id) as tab,publicacao AS p
+WHERE tab.Anome=p.Area_Tematica_Id AND p.relevancia=tab.maxx;
 ---------------------------------------------------------------------------------------------------------------------------------------
 4-SELECT publicacao.Nome,emprestimo.Data_hora 
 FROM publicacao,emprestimo 

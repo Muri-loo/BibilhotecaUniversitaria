@@ -6,17 +6,27 @@ INSERT INTO `autor` (`id`, `Nome`) VALUES
 (9890, 'Rodrigo'),
 (7654, 'Salvador');
 ---------------------------------------------------------------------------------------------------------------------------------------------------------
-INSERT INTO `area_tematica` (`Id`, `Nome`, `Area_Tematica_superior_Id`) VALUES ('1', 'Ficção', NULL);
-INSERT INTO `area_tematica` (`Id`, `Nome`, `Area_Tematica_superior_Id`) VALUES ('2', 'Fantasia', NULL);
-INSERT INTO `area_tematica` (`Id`, `Nome`, `Area_Tematica_superior_Id`) VALUES ('3232', 'Aventura', NULL);
-INSERT INTO `area_tematica` (`Id`, `Nome`, `Area_Tematica_superior_Id`) VALUES ('5678', 'Romance', NULL);
+INSERT INTO `area_tematica` (`Id`, `Nome`, `Area_Tematica_superior_Id`) VALUES
+(3232, 'Aventura', NULL),
+(25, 'Familiares', NULL),
+(2, 'Fantasia', NULL),
+(1, 'Ficção', NULL),
+(5678, 'Romance', NULL),
+(20, 'Terror', NULL);
+
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 INSERT INTO `publicacao` (`Id`, `Nome`, `Nome_abreviado`, `Codigo`, `Data_de_publicacao`, `Ano_de_publicacao`, `Nr_Pags`, `Capa`, `Capa_em_miniatura`, `Qtd_Emprestimos`, `Qtd_Acessos`, `Data_de_aquisicao`, `Area_Tematica_Id`, `relevancia`) VALUES
-(1, 'Harry Potter', 'HP', 1001, '2021-12-01', 2015, 329, '(\"PATH/TO/IMG\")', '(\"PATH/TO/IMG\")', 0, 0, '2016-12-08', NULL, 3),
+(1, 'Harry Potter', 'HP', 1001, '2021-12-01', 2015, 329, '(\"PATH/TO/IMG\")', '(\"PATH/TO/IMG\")', 0, 0, '2016-12-08', 3232, 3),
 (2, 'Wonderland', 'alice', 1002, '2021-12-03', 2014, 325, 'Path', 'path', 0, 0, '2021-12-05', 2, 4),
 (3, 'TimesNewRoman', '1', 1003, '2021-12-01', 2015, 120, 'path', 'path', 0, 0, '2021-12-07', 1, 1),
 (4, 'MonografiaIscte', 'iscte', 1004, '2021-12-01', 2014, 203, 'path', 'path', 0, 0, '2021-12-06', 1, 4),
+(6, 'Sozinho em casa', 'casa', 450, '2021-05-12', 2005, 250, NULL, NULL, 0, 0, '2019-10-09', 25, 2),
+(10, 'dasdas', NULL, 123123, NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, 1, 4),
+(55, 'Baile do anao', NULL, 25646, NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, 3232, 3),
+(1530, 'anabelle', 'ana', 987, '2017-12-07', 2013, 400, NULL, NULL, 0, 0, '2021-09-01', 20, 3),
+(2464, 'Teoria Do Universo', NULL, 7641, '2018-12-06', 2014, 325, NULL, NULL, 0, 0, '2021-12-07', 1, 5),
 (64747, 'Vivenda russa', 'russ', 9809, '2021-11-17', 2021, 322, 'bonm', 'bobn', 5, 4, '2021-12-01', 1, 2),
+(74185, 'After', 'af', 1015, '2021-12-15', 2018, 150, NULL, NULL, 0, 0, '2021-12-01', 5678, 4),
 (98799, 'A aventura do salsichao', 'salsa', 1234, '2021-12-02', 2021, 65, 'Bonita historia', NULL, 2, 3, '2021-12-05', 2, 3);
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
