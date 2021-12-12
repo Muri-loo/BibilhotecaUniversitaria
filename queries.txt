@@ -19,10 +19,6 @@ WHERE publicacao.Area_Tematica_Id=area_tematica.Id
 GROUP BY Area_Tematica_Id) as tab,publicacao AS p
 WHERE tab.Anome=p.Area_Tematica_Id AND p.relevancia=tab.maxx;
 ---------------------------------------------------------------------------------------------------------------------------------------
-4-SELECT publicacao.Nome,emprestimo.Data_hora 
-FROM publicacao,emprestimo 
-WHERE publicacao.Id=emprestimo.Publicacao_Id 
-AND emprestimo.Data_hora between '2021-01-1' and DATE_ADD("2021-01-1", INTERVAL 6 MONTH);
 --------------------------------------------------------------------------------------------------------------------------------------
 4 FINAL-SELECT publicacao.Nome 
 FROM publicacao,emprestimo 
