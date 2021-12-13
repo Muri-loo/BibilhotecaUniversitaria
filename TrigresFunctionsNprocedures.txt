@@ -14,14 +14,7 @@ GROUP BY area_tematica.Id;
 END
 ---------------------------------------------------------------------------------------------------------------------------------------
 3--------------------------------------------------------------------------------------------------------------------------------------
-
-
-
-
-
-
-
-CREAT VIEW tab(Num,NumDias) AS 
+CREATE VIEW tab(Num,NumDias) AS 
 SELECT emprestimo_com_multa.Numero AS num,Datediff(CURRENT_DATE,emprestimo.Data_de_devolucao_limite) AS numeroDias FROM emprestimo_com_multa,emprestimo
 WHERE emprestimo_com_multa.Numero=emprestimo.Numero AND emprestimo_com_multa.Multa_paga=false AND emprestimo.Data_de_devolucao IS NULL;
 
@@ -63,10 +56,6 @@ END
 
 
 
-
-
-
-
 ------------------------------------------------------------------------------------------------------------------------------------
 4-parte2
 BEGIN
@@ -75,9 +64,64 @@ SELECT emprestimo.Utente_Numero,CURRENT_DATE,DATE_ADD(CURRENT_DATE,INTERVAL 1 MO
 WHERE emprestimo_com_multa.Numero=emprestimo.Numero AND DATE_ADD(emprestimo.Data_de_devolucao_limite,INTERVAL 1 MONTH)<CURRENT_DATE
 AND emprestimo_com_multa.Multa_paga=false;
 END
+
+CREATE EVENT Automatismo
+    ON SCHEDULE
+      AT CURRENT_TIMESTAMP + INTERVAL 1 DAY
+    DO call SuspendManually();
 ------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------------
+5------------------------------------------------------------------------------------------------------------------------------------
+BEGIN 
+DECLARE numeroDias integer;
+DECLARE preco integer;
+SET preco=15;
+
+UPDATE
+emprestimo_com_multa
+SET Valor_actual_por_atraso=(SELECT tab.NumDias*preco
+                             FROM tab
+                            WHERE tab.Num=Numero);
+END
+--------------------------------------------------------------------------------------------------------------------------------------
+6-------------------------------------------------------------------------------------------------------------------------------------
+BEGIN
+
+DECLARE disp boolean;
+DECLARE Lreserva date;
+
+SELECT exemplar.Pode_ser_emprestado INTO disp FROM exemplar
+WHERE exemplar.Publicacao_Id=new.Publicacao_Id
+AND exemplar.Nr=new.Exemplar_Nr;
+
+SELECT MAX(reserva.Data_e_Hora) INTO Lreserva FROM reserva
+WHERE reserva.Publicacao_Id_=new.Publicacao_Id;
+
+IF(Lreserva>DATE_ADD(CURRENT_DATE, INTERVAL -1 MONTH)) THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Ha reservas Realizadas a menos de 1 mês';
+END IF;
+IF(disp=false) THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Esta Publicação não pode ser Emprestada';
+END IF;
 
 
+END
+-----------------------------------------------------------------------------------------------------------------------------------
+7-------------------------------------------------------------------------------------------------------------------------------------
+BEFORE
+INSERT
+ALL   MONOGRAFIA && Edicao_livro  && edicao_ou_peridico 
+
+
+BEGIN
+DECLARE temtipo integer;
+SELECT COUNT(*) into temtipo WHERE new.Publicacao_Id IN(SELECT tabe.Id FROM tabe);
+IF(temtipo!=0) THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Publicação ja tem tipo';
+END IF;
+
+------------------------------------------------------------------------------------------------------------------------------------
+8-----------------------------------------------------------------------------------------------------------------------------------
 
 
 
@@ -89,15 +133,15 @@ END
 
 
 -------------------------------------------------------------------------------------------------------------------------------------
-5------------------------------------------------------------------------------------------------------------------------------------
-BEGIN
-declare nemprestimo integer;
-SELECT COUNT(*) INTO nemprestimo
-FROM emprestimo
-WHERE emprestimo.Publicacao_Id=new.Publicacao_Id;
-UPDATE
-publicacao
-SET publicacao.Qtd_Emprestimos=nemprestimo
-WHERE publicacao.Id=new.Publicacao_Id;
+
 END
+
+
+
+
+
+
+
+
+
 --------------------------------------------------------------------------------------------------------------------------------------

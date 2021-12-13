@@ -1,9 +1,23 @@
 ----------------------------------------------------------------------------------------------------------------------------------------
-1-SELECT publicacao.Nome,publicacao.Data_de_publicacao,
-IF(publicacao.Id=edicao_de_livro.Publicacao_Id,'Livro',
-  IF(publicacao.Id=edicao_de_periodico.Publicacao_Id,'Periodico',
-    IF(publicacao.Id=monografia.Publicacao_Id,'Monografia','NA')  )	)
-FROM publicacao,edicao_de_periodico,edicao_de_livro,monografia;
+1-CREATE VIEW tabe(Id,dataa,Nome,Tipo) AS
+SELECT publicacao.Id,publicacao.Data_de_publicacao,publicacao.Nome,'Livro'
+FROM publicacao,edicao_de_livro
+WHERE publicacao.Id=edicao_de_livro.Publicacao_Id
+UNION
+SELECT publicacao.Id,publicacao.Data_de_publicacao,publicacao.Nome,'Periodico'
+FROM publicacao,edicao_de_periodico
+WHERE publicacao.Id=edicao_de_periodico.Publicacao_Id
+UNION
+SELECT publicacao.Id,publicacao.Data_de_publicacao,publicacao.Nome,'Monografia'
+FROM publicacao,monografia
+WHERE publicacao.Id=monografia.Publicacao_Id;
+
+SELECT tabe.Nome,tabe.dataa,tabe.Tipo FROM tabe
+UNION
+SELECT publicacao.Nome,publicacao.Data_de_publicacao,'NA' 
+FROM publicacao
+WHERE publicacao.Id NOT IN(SELECT tabe.Id FROM tabe);
+
 --------------------------------------------------------------------------------------------------------------------------------------
 2-SELECT publicacao.Nome,COUNT(*) AS NumeroReservas FROM publicacao,reserva
 WHERE reserva.Publicacao_Id_=publicacao.Id  AND reserva.Data_e_Hora>DATE_ADD(CURRENT_DATE, INTERVAL -6 MONTH) 
@@ -36,9 +50,9 @@ LIMIT 1);
 
 -----------------------------------------------------------------------------------------------------------------------------------------
 QUERY CORRETA 
-5-SELECT lista.Lista_de_leitura_Nome_,COUNT(DISTINCT publicacao.Area_Tematica_Id) AS numeroAreas FROM livro_em_lista_leitura AS lista,edicao_de_livro,publicacao
+5-SELECT lista.Lista_de_leitura_Utente_Numero_,lista.Lista_de_leitura_Nome_,COUNT(DISTINCT publicacao.Area_Tematica_Id) AS numeroAreas FROM livro_em_lista_leitura AS lista,edicao_de_livro,publicacao
 WHERE lista.Edicao_de_Livro_Livro_Id_=edicao_de_livro.Livro_Id AND edicao_de_livro.Publicacao_Id=publicacao.Id
-GROUP BY lista.Lista_de_leitura_Nome_
+GROUP BY lista.Lista_de_leitura_Nome_,lista.Lista_de_leitura_Utente_Numero_
 HAVING COUNT(DISTINCT publicacao.Area_Tematica_Id)/(SELECT COUNT(*) FROM area_tematica)>0.75;
 ------------------------------------------------------------------------------------------------------------------------------------
 6-------------------------------------------------------------------------------------------------------------------------------------
