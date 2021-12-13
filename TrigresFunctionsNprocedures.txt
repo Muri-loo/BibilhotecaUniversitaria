@@ -14,20 +14,80 @@ GROUP BY area_tematica.Id;
 END
 ---------------------------------------------------------------------------------------------------------------------------------------
 3--------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+CREAT VIEW tab(Num,NumDias) AS 
+SELECT emprestimo_com_multa.Numero AS num,Datediff(CURRENT_DATE,emprestimo.Data_de_devolucao_limite) AS numeroDias FROM emprestimo_com_multa,emprestimo
+WHERE emprestimo_com_multa.Numero=emprestimo.Numero AND emprestimo_com_multa.Multa_paga=false AND emprestimo.Data_de_devolucao IS NULL;
+
 BEGIN 
 DECLARE numeroDias integer;
+DECLARE preco integer;
+SET preco=15;
 
-SELECT Datediff(CURRENT_DATE,emprestimo.Data_de_devolucao_limite) INTO numeroDias FROM emprestimo_com_multa,emprestimo
-WHERE emprestimo_com_multa.Numero=emprestimo.Numero AND emprestimo_com_multa.Multa_paga=false AND emprestimo.Data_de_devolucao IS NULL
-AND emprestimo_com_multa.Numero=IDE;
-
-UPDATE 
-emprestimo_com_multa 
-SET Valor_actual_por_atraso=numeroDias*preco;
+INSERT INTO emprestimo_com_multa (Numero,valor_actual_por_atraso,valor_por_extravio,valor_total,multa_paga)
+SELECT tab.Num,tab.NumDias*preco,0,0,0 FROM tab
+ON DUPLICATE KEY UPDATE 
+valor_actual_por_atraso =tab.NumDias*preco ;
 
 END
+
 --------------------------------------------------------------------------------------------------------------------------------------
 4------------------------------------------------------------------------------------------------------------------------------------
+4-parte1
+BEGIN
+
+DECLARE valor_extravio integer;
+DECLARE tapago boolean;
+
+SELECT emprestimo_com_multa.Valor_actual_por_atraso INTO valor_extravio FROM emprestimo_com_multa
+WHERE emprestimo_com_multa.Numero=new.Numero;
+
+SELECT emprestimo_com_multa.Multa_paga  INTO tapago 
+FROM emprestimo_com_multa
+WHERE emprestimo_com_multa.Numero=new.Numero;
+
+IF(valor_extravio!=0 AND tapago=false) THEN
+INSERT INTO utente_suspenso (Numero,Data_inicio,Data_fim)
+SELECT emprestimo.Utente_Numero,CURRENT_DATE,DATE_ADD(CURRENT_DATE,INTERVAL 1 MONTH)
+FROM emprestimo
+WHERE emprestimo.Numero=new.numero;
+
+END IF;
+END
+
+
+
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------
+4-parte2
+BEGIN
+INSERT INTO utente_suspenso (Numero,Data_inicio,Data_fim)
+SELECT emprestimo.Utente_Numero,CURRENT_DATE,DATE_ADD(CURRENT_DATE,INTERVAL 1 MONTH) FROM emprestimo_com_multa,emprestimo
+WHERE emprestimo_com_multa.Numero=emprestimo.Numero AND DATE_ADD(emprestimo.Data_de_devolucao_limite,INTERVAL 1 MONTH)<CURRENT_DATE
+AND emprestimo_com_multa.Multa_paga=false;
+END
+------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
 -------------------------------------------------------------------------------------------------------------------------------------
 5------------------------------------------------------------------------------------------------------------------------------------
 BEGIN

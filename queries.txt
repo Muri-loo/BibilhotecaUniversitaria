@@ -41,5 +41,13 @@ WHERE lista.Edicao_de_Livro_Livro_Id_=edicao_de_livro.Livro_Id AND edicao_de_liv
 GROUP BY lista.Lista_de_leitura_Nome_
 HAVING COUNT(DISTINCT publicacao.Area_Tematica_Id)/(SELECT COUNT(*) FROM area_tematica)>0.75;
 ------------------------------------------------------------------------------------------------------------------------------------
+6-------------------------------------------------------------------------------------------------------------------------------------
 
 
+
+
+----------------------------------------------------------------------------------------------------------------------------------------
+7---------------------------------------------------------------------------------------------------------------------------------------
+Query A-SELECT AVG(datediff(publicacao.Data_de_aquisicao,publicacao.Data_de_publicacao)) AS MediaAquisição FROM publicacao;
+Query B-SELECT Max(datediff(publicacao.Data_de_aquisicao,publicacao.Data_de_publicacao)) AS MaximoTempo,MIN(datediff(publicacao.Data_de_aquisicao,publicacao.Data_de_publicacao)) AS MinTempo FROM publicacao;														  ;
+-------------------------------------------------------------------------------------------------------------------------------------
