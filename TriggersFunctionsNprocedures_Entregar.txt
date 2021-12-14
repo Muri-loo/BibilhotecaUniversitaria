@@ -1,0 +1,165 @@
+1-
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `1)`(IN `id` INT(2))
+BEGIN
+SELECT * FROM exemplar WHERE exemplar.Publicacao_Id=id;
+END$$
+DELIMITER ;
+
+--------------------------------------------------------------------------------------------------------------------------------------
+2-
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `ContagemTemasLista`(IN `nomeL` VARCHAR(255), IN `nUT` INT)
+BEGIN
+SELECT area_tematica.Nome,COUNT(*) AS Tema FROM livro_em_lista_leitura AS l,edicao_de_livro,publicacao,area_tematica
+WHERE
+l.Edicao_de_Livro_Livro_Id_=edicao_de_livro.Livro_Id AND edicao_de_livro.Publicacao_Id=publicacao.Id AND publicacao.Area_Tematica_Id=area_tematica.Id
+AND l.Lista_de_leitura_Nome_=nomeL
+AND l.Lista_de_leitura_Utente_Numero_=nUT
+GROUP BY area_tematica.Id;
+END$$
+
+--------------------------------------------------------------------------------------------------------------------------------------
+3-
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `AtualizaMulta`()
+BEGIN 
+DECLARE numeroDias integer;
+DECLARE preco integer;
+SET preco=15;
+
+UPDATE
+emprestimo_com_multa
+SET Valor_actual_por_atraso=(SELECT tab.NumDias*preco
+                             FROM tab
+                            WHERE tab.Num=Numero);
+
+
+END$$
+
+---------------------------------------------------------------------------------------------------------------------------------------
+4-
+PARTE1-
+CREATE TRIGGER `Supensao` AFTER UPDATE ON `emprestimo_com_multa`
+ FOR EACH ROW BEGIN
+
+DECLARE valor_extravio integer;
+DECLARE tapago boolean;
+
+SELECT Valor_por_extravio INTO valor_extravio FROM emprestimo_com_multa
+WHERE emprestimo_com_multa.Numero=new.Numero;
+
+SELECT emprestimo_com_multa.Multa_paga  INTO tapago 
+FROM emprestimo_com_multa
+WHERE emprestimo_com_multa.Numero=new.Numero;
+
+IF( !ISNULL(valor_extravio) AND tapago=false) THEN
+INSERT INTO utente_suspenso (Numero,Data_inicio,Data_fim)
+SELECT emprestimo.Utente_Numero,CURRENT_DATE,DATE_ADD(CURRENT_DATE,INTERVAL 1 MONTH)
+FROM emprestimo
+WHERE emprestimo.Numero=new.numero;
+
+END IF;
+END
+
+PARTE2-
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `DentroPrazo`()
+BEGIN
+INSERT INTO utente_suspenso (Numero,Data_inicio,Data_fim)
+SELECT emprestimo.Utente_Numero,CURRENT_DATE,DATE_ADD(CURRENT_DATE,INTERVAL 1 MONTH) FROM emprestimo_com_multa,emprestimo
+WHERE emprestimo_com_multa.Numero=emprestimo.Numero AND DATE_ADD(emprestimo.Data_de_devolucao_limite,INTERVAL 1 MONTH)<CURRENT_DATE
+AND emprestimo_com_multa.Multa_paga=false;
+
+
+END$$
+DELIMITER ;
+
+Automatismo 
+CREATE EVENT SuspenderClientes
+  ON SCHEDULE
+    EVERY 1 DAY
+    STARTS (TIMESTAMP(CURRENT_DATE) + INTERVAL 1 DAY + INTERVAL 1 HOUR)
+  DO
+    CALL dentroprazo();
+
+--------------------------------------------------------------------------------------------------------------------------------------
+5-
+CREATE TRIGGER `AtualizaEmprestimos` AFTER INSERT ON `emprestimo`
+ FOR EACH ROW BEGIN
+declare nemprestimo integer;
+SELECT COUNT(*) INTO nemprestimo
+FROM emprestimo
+WHERE emprestimo.Publicacao_Id=new.Publicacao_Id;
+UPDATE
+publicacao
+SET publicacao.Qtd_Emprestimos=nemprestimo
+WHERE publicacao.Id=new.Publicacao_Id;
+END
+--------------------------------------------------------------------------------------------------------------------------------------
+6-
+CREATE TRIGGER `ValidarEmprestimo` BEFORE INSERT ON `emprestimo`
+ FOR EACH ROW BEGIN
+
+DECLARE disp boolean;
+DECLARE Lreserva date;
+
+SELECT exemplar.Pode_ser_emprestado INTO disp FROM exemplar
+WHERE exemplar.Publicacao_Id=new.Publicacao_Id
+AND exemplar.Nr=new.Exemplar_Nr;
+
+SELECT MAX(reserva.Data_e_Hora) INTO Lreserva FROM reserva
+WHERE reserva.Publicacao_Id_=new.Publicacao_Id;
+
+IF(Lreserva>DATE_ADD(CURRENT_DATE, INTERVAL -1 MONTH)) THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Ha reservas Realizadas a menos de 1 mês';
+END IF;
+IF(disp=false) THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Esta Publicação não pode ser Emprestada';
+END IF;
+
+
+END
+
+--------------------------------------------------------------------------------------------------------------------------------------
+7-
+
+CREATE TRIGGER `ValidaLivro` BEFORE INSERT ON `edicao_de_livro`
+ FOR EACH ROW BEGIN
+DECLARE temtipo integer;
+SELECT COUNT(*) into temtipo WHERE new.Publicacao_Id IN(SELECT tabe.Id FROM tabe);
+IF(temtipo!=0) THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Publicação ja tem tipo';
+END IF;
+
+END
+
+
+CREATE TRIGGER `ValidaMonografia` BEFORE INSERT ON `monografia`
+ FOR EACH ROW BEGIN
+DECLARE temtipo integer;
+SELECT COUNT(*) into temtipo WHERE new.Publicacao_Id IN(SELECT tabe.Id FROM tabe);
+IF(temtipo!=0) THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Publicação ja tem tipo';
+END IF;
+
+END
+
+
+CREATE TRIGGER `validaPeriodico` BEFORE INSERT ON `edicao_de_periodico`
+ FOR EACH ROW BEGIN
+DECLARE temtipo integer;
+SELECT COUNT(*) into temtipo WHERE new.Publicacao_Id IN(SELECT tabe.Id FROM tabe);
+IF(temtipo!=0) THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Publicação ja tem tipo';
+END IF;
+
+END
+
+---------------------------------------------------------------------------------------------------------------------------------
+8-
+
+

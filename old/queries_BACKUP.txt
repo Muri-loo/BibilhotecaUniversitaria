@@ -46,6 +46,19 @@ AND emprestimo.Data_hora between '2021-01-1' and DATE_ADD("2021-01-1", INTERVAL 
 GROUP BY publicacao.Nome
 ORDER BY COUNT(*) DESC 
 LIMIT 1);
+
+parte1-
+SELECT publicacao.Nome, publicacao.Area_Tematica_Id,COUNT(*) AS NumEmprestimos
+FROM publicacao,emprestimo
+WHERE publicacao.Id=emprestimo.Publicacao_Id AND emprestimo.Data_hora between '2021-01-1' AND DATE_ADD("2021-01-1", INTERVAL 6 MONTH);
+
+
+parte2-
+SELECT publicacao.Area_Tematica_Id AS areaid,COUNT(*) AS MaxEmprestimos
+FROM publicacao,emprestimo 
+WHERE publicacao.Id=emprestimo.Publicacao_Id 
+AND emprestimo.Data_hora between '2021-01-1' AND DATE_ADD("2021-01-1", INTERVAL 6 MONTH)
+GROUP BY publicacao.Id;
 ---------------------------------------------------------------------------------------------------------------------------------------
 
 -----------------------------------------------------------------------------------------------------------------------------------------
