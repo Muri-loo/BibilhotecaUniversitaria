@@ -1,3 +1,9 @@
+VIEWS USADAS
+CREATE VIEW tab(Num,NumDias) AS 
+SELECT emprestimo_com_multa.Numero AS num,Datediff(CURRENT_DATE,emprestimo.Data_de_devolucao_limite) AS numeroDias FROM emprestimo_com_multa,emprestimo
+WHERE emprestimo_com_multa.Numero=emprestimo.Numero AND emprestimo_com_multa.Multa_paga=false AND emprestimo.Data_de_devolucao IS NULL;
+----------------------------------------------------------------------------------------------------------------------------------------
+
 1-
 
 DELIMITER $$
