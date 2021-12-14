@@ -36,6 +36,23 @@ WHERE tab.Anome=p.Area_Tematica_Id AND p.relevancia=tab.maxx;
 
 ---------------------------------------------------------------------------------------------------------------------------------------
 4-
+
+CREATE VIEW maximoEmprestimo(id,nmax)	AS
+SELECT t.Aid,MAX(t.NumEmprestimos) FROM
+(SELECT p.Nome nome, p.Area_Tematica_Id Aid,COUNT(*) AS NumEmprestimos
+FROM publicacao AS p,emprestimo
+WHERE p.Id=emprestimo.Publicacao_Id AND emprestimo.Data_hora between '2021-01-1' AND DATE_ADD("2021-01-1", INTERVAL 6 MONTH)
+GROUP BY p.Id) as t
+GROUP BY t.Aid;
+
+SELECT t.nome,t.aid,t.NumEmprestimos AS maximo FROM
+(SELECT p.Nome nome, p.Area_Tematica_Id Aid,COUNT(*) AS NumEmprestimos
+FROM publicacao AS p,emprestimo
+WHERE p.Id=emprestimo.Publicacao_Id AND emprestimo.Data_hora between '2021-01-1' AND DATE_ADD("2021-01-1", INTERVAL 6 MONTH)
+GROUP BY p.Id) as t, maximoemprestimo
+WHERE maximoemprestimo.nmax=t.NumEmprestimos AND maximoemprestimo.id=t.aid;
+
+---------------------------------------------------------------------------------------------------------------------------------------
 SELECT p.Nome, p.Area_Tematica_Id,COUNT(*) AS NumEmprestimos
 FROM publicacao AS p,emprestimo
 WHERE p.Id=emprestimo.Publicacao_Id AND emprestimo.Data_hora between '2021-01-1' AND DATE_ADD("2021-01-1", INTERVAL 6 MONTH)

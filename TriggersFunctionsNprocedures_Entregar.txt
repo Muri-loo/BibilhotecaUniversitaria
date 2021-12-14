@@ -2,6 +2,7 @@ VIEWS USADAS
 CREATE VIEW tab(Num,NumDias) AS 
 SELECT emprestimo_com_multa.Numero AS num,Datediff(CURRENT_DATE,emprestimo.Data_de_devolucao_limite) AS numeroDias FROM emprestimo_com_multa,emprestimo
 WHERE emprestimo_com_multa.Numero=emprestimo.Numero AND emprestimo_com_multa.Multa_paga=false AND emprestimo.Data_de_devolucao IS NULL;
+
 ----------------------------------------------------------------------------------------------------------------------------------------
 
 1-
@@ -167,5 +168,54 @@ END
 
 ---------------------------------------------------------------------------------------------------------------------------------
 8-
+CREATE TRIGGER `ULTIMA_ALINEA` AFTER INSERT ON `edicao_de_periodico`
+ FOR EACH ROW BEGIN
+
+DECLARE emprestavel boolean;
+DECLARE id integer;
+DECLARE qtdNEmprestavel integer;
+
+SELECT rev.Qtd_edicoes_nao_emprestaveis into qtdNEmprestavel
+FROM revista rev
+WHERE new.Periodico_Editora_ou_Periodico_Id=rev.Periodico_Editora_ou_Periodico_Id 
+AND rev.Qtd_edicoes_nao_emprestaveis IS NOT NULL;
+
+SELECT edicao_de_periodico.Publicacao_Id INTO id
+FROM edicao_de_periodico
+WHERE edicao_de_periodico.Numero=(new.Numero-qtdNEmprestavel);
+
+
+UPDATE
+exemplar
+SET Pode_ser_emprestado=true
+WHERE exemplar.Publicacao_Id=id;
+
+END
+---------------------------------------------------------------------------------------------------------------------------------------
+8-
+CREATE TRIGGER `ULTIMA_ALINEA` AFTER INSERT ON `edicao_de_periodico`
+ FOR EACH ROW BEGIN
+
+DECLARE emprestavel boolean;
+DECLARE id integer;
+DECLARE qtdNEmprestavel integer;
+
+SELECT rev.Qtd_edicoes_nao_emprestaveis into qtdNEmprestavel
+FROM revista rev
+WHERE new.Periodico_Editora_ou_Periodico_Id=rev.Periodico_Editora_ou_Periodico_Id 
+AND rev.Qtd_edicoes_nao_emprestaveis IS NOT NULL;
+
+SELECT edicao_de_periodico.Publicacao_Id INTO id
+FROM edicao_de_periodico
+WHERE edicao_de_periodico.Numero=(new.Numero-qtdNEmprestavel);
+
+
+UPDATE
+exemplar
+SET Pode_ser_emprestado=true
+WHERE exemplar.Publicacao_Id=id;
+
+END
+--------------------------------------------------------------------------------------------------------------------------------------
 
 
